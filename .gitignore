@@ -81,6 +81,9 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+<<<<<<< HEAD
 
 # JetBrains
 .idea/
+=======
+>>>>>>> 532a53179d83d87fc8840944b1a3a8924b957cb6
