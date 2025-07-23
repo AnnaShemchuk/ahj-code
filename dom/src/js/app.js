@@ -1,12 +1,12 @@
-import gnomeImage from '../images/gnome.png';
+const gnomeImage = require('../images/gnome.png');
 
 class Game {
-    constructor() {
-        this.fieldSize = 4;
-        this.currentPosition = null;
-        this.gnomeImage = gnomeImage;
-        this.init();
-    }
+  constructor() {
+    this.fieldSize = 4;
+    this.currentPosition = null;
+    this.gnomeImage = gnomeImage;
+    this.init();
+  }
 
     init() {
         this.createField();
@@ -68,4 +68,4 @@ class Game {
     }
 }
 
-export default Game;
+module.exports = Game;

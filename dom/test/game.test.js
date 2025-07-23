@@ -1,11 +1,14 @@
 const Game = require('../src/js/app');
 
-describe('Game Class', () => {
+describe('Game', () => {
   let game;
 
   beforeEach(() => {
-    document.body.innerHTML = '';
     game = new Game();
+  });
+
+  test('should create game field', () => {
+    expect(document.querySelector('.game-field')).not.toBeNull();
   });
 
   describe('Field Creation', () => {
