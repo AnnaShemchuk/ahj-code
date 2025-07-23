@@ -1,33 +1,19 @@
 {
-  "name": "ajs",
-  "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "start": "webpack serve --mode development",
+    "start": "webpack serve",
     "build": "webpack --mode production",
-    "test": "jest",
-    "lint": "eslint src",
-    "deploy": "gh-pages -d dist"
+    "test": "jest"
   },
-  "author": "coursar",
-  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@babel/preset-env": "^7.28.0",
-    "babel-loader": "^10.0.0",
+    "babel-loader": "^8.4.1",
     "css-loader": "^7.1.2",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.32.0",
-    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.6.3",
-    "jest": "^30.0.4",
-    "live-server": "^1.2.1",
+    "portfinder": "^1.0.37",
     "style-loader": "^4.0.0",
     "webpack": "^5.100.2",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.2"
-  },
-  "keywords": [],
-  "description": ""
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.2"
+  }
 }

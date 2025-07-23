@@ -2,40 +2,50 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'production',
-    entry: path.resolve(__dirname, 'src', 'index.js'),
+    mode: 'development',
+    entry: './src/index.js',
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
         clean: true,
-        assetModuleFilename: 'images/[hash][ext][query]'
     },
     module: {
         rules: [
             {
-                test: /\.css$/i,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            modules: false
-                        }
-                    }
-                ]
+                test: /\.(png|jpg|jpeg|gif|svg)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[hash][ext][query]'
+                }
             },
             {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                type: 'asset/resource'
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, 'src', 'index.html')
+            template: './src/index.html'
         })
     ],
-    resolve: {
-        extensions: ['.js', '.css']
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+        compress: true,
+        port: 'auto',
+        open: true,
+        hot: true
     }
 };
