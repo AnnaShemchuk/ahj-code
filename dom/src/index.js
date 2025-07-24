@@ -1,3 +1,5 @@
+'use strict';
+
 const Game = require('./js/app');
 
 document.addEventListener('DOMContentLoaded', () => {

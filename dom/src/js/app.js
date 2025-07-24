@@ -1,3 +1,5 @@
+'use strict';
+
 const gnomeImage = require('../images/gnome.png');
 
 class Game {
@@ -5,67 +7,93 @@ class Game {
     this.fieldSize = 4;
     this.currentPosition = null;
     this.gnomeImage = gnomeImage;
+    this.intervalId = null;
     this.init();
   }
 
-    init() {
-        this.createField();
-        this.createGnome();
-        this.startMoving();
+  init() {
+    this.createField();
+    this.createGnome();
+    this.startMoving();
+  }
+
+  createField() {
+    const field = document.createElement('div');
+    Object.assign(field.style, {
+      display: 'grid',
+      gridTemplateColumns: `repeat(${this.fieldSize}, 1fr)`,
+      gridTemplateRows: `repeat(${this.fieldSize}, 1fr)`,
+      gap: '10px',
+      width: '400px',
+      height: '400px',
+    });
+    field.className = 'game-field';
+
+    for (let i = 0; i < this.fieldSize ** 2; i += 1) {
+      const cell = document.createElement('div');
+      Object.assign(cell.style, {
+        border: '1px solid #ccc',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      });
+      cell.className = 'cell';
+      field.appendChild(cell);
     }
 
-    createField() {
-        const field = document.createElement('div');
-        field.className = 'game-field';
-        field.style.display = 'grid';
-        field.style.gridTemplateColumns = `repeat(${this.fieldSize}, 1fr)`;
-        field.style.gridTemplateRows = `repeat(${this.fieldSize}, 1fr)`;
-        field.style.gap = '10px';
-        field.style.width = '400px';
-        field.style.height = '400px';
+    document.body.appendChild(field);
+    this.field = field;
+  }
 
-        for (let i = 0; i < this.fieldSize ** 2; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.style.border = '1px solid #ccc';
-            cell.style.display = 'flex';
-            cell.style.justifyContent = 'center';
-            cell.style.alignItems = 'center';
-            field.appendChild(cell);
-        }
+  createGnome() {
+    this.gnome = document.createElement('img');
+    Object.assign(this.gnome.style, {
+      width: '50px',
+      height: '50px',
+    });
+    this.gnome.src = this.gnomeImage;
+    this.gnome.className = 'gnome';
+    this.gnome.alt = 'Gnome character';
+    this.moveToRandomCell();
+  }
 
-        document.body.appendChild(field);
-        this.field = field;
+  moveToRandomCell() {
+  const cells = this.field.querySelectorAll('.cell');
+
+  if (!cells || cells.length === 0) {
+    return;
+  }
+
+  let newPosition;
+  
+  if (cells.length === 1) {
+    newPosition = 0;
+  } else {
+    do {
+      newPosition = Math.floor(Math.random() * cells.length);
+    } while (newPosition === this.currentPosition && cells.length > 1);
+  }
+
+  if (this.currentPosition !== null && cells[this.currentPosition]) {
+    cells[this.currentPosition].innerHTML = '';
+  }
+
+  if (cells[newPosition]) {
+    cells[newPosition].appendChild(this.gnome);
+    this.currentPosition = newPosition;
+  }
+}
+
+  startMoving() {
+    this.intervalId = setInterval(() => this.moveToRandomCell(), 2000);
+  }
+
+  stopMoving() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
     }
-
-    createGnome() {
-        this.gnome = document.createElement('img');
-        this.gnome.src = this.gnomeImage;
-        this.gnome.className = 'gnome';
-        this.gnome.style.width = '50px';
-        this.gnome.style.height = '50px';
-        this.moveToRandomCell();
-    }
-
-    moveToRandomCell() {
-        const cells = this.field.querySelectorAll('.cell');
-        let newPosition;
-
-        do {
-            newPosition = Math.floor(Math.random() * cells.length);
-        } while (newPosition === this.currentPosition && cells.length > 1);
-
-        if (this.currentPosition !== null) {
-            cells[this.currentPosition].innerHTML = '';
-        }
-        
-        cells[newPosition].appendChild(this.gnome);
-        this.currentPosition = newPosition;
-    }
-
-    startMoving() {
-        setInterval(() => this.moveToRandomCell(), 2000);
-    }
+  }
 }
 
 module.exports = Game;

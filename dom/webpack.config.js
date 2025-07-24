@@ -2,13 +2,17 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
-  entry: './src/index.js',
+  mode: process.env.NODE_ENV || 'development',
+  entry: path.resolve(__dirname, 'src/index.js'),
   output: {
-    filename: 'bundle.js',
+    filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    publicPath: '/'
+    publicPath: '/',
+    assetModuleFilename: 'assets/[hash][ext][query]'
+  },
+  resolve: {
+    extensions: ['.js', '.json'],
   },
   module: {
     rules: [
@@ -16,23 +20,37 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
         }
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.(png|jpe?g|gif|svg|webp)$/i,
         type: 'asset/resource',
         generator: {
           filename: 'images/[hash][ext][query]'
         }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       }
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: path.resolve(__dirname, 'src/index.html'),
+      favicon: path.resolve(__dirname, 'src/favicon.ico')
     })
   ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
+  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map',
   devServer: {
     static: {
       directory: path.join(__dirname, 'dist'),
@@ -40,6 +58,13 @@ module.exports = {
     compress: true,
     port: 'auto',
     open: true,
-    hot: true
+    hot: true,
+    historyApiFallback: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    }
   }
 };
