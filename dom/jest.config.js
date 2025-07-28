@@ -12,9 +12,17 @@ module.exports = {
     '@testing-library/jest-dom'
   ],
   modulePathIgnorePatterns: [
-    '<rootDir>/anim/',
-    '<rootDir>/dnd/',
-    '<rootDir>/env/',
-    '<rootDir>/env2/'
-  ]
+    '<rootDir>/anim',
+    '<rootDir>/dnd',
+    '<rootDir>/env',
+    '<rootDir>/env2',
+    '<rootDir>/http/backend',
+    '<rootDir>/rxjs/backend',
+    '<rootDir>/workers/webpack-service-worker',
+    '<rootDir>/workers/webpack-web-worker'
+  ],
+  haste: {
+    throwOnModuleCollision: false,
+    enableSymlinks: false,
+  }
 };
