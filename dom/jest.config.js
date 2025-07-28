@@ -1,7 +1,9 @@
 module.exports = {
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['js'],
-  transform: {},
+  transform: {
+    '^.+\\.js$': 'babel-jest'
+  },
   resetMocks: true,
   clearMocks: true,
   moduleNameMapper: {

@@ -1,13 +1,13 @@
 'use strict';
 
-const gnomeImage = require('../images/gnome.png');
-
 class Game {
   constructor() {
     this.fieldSize = 4;
     this.currentPosition = null;
-    this.gnomeImage = gnomeImage;
+    this.gnomeImage = 'gnome.png';
     this.intervalId = null;
+    this.field = null;
+    this.gnome = null;
     this.init();
   }
 
@@ -29,7 +29,7 @@ class Game {
     });
     field.className = 'game-field';
 
-    for (let i = 0; i < this.fieldSize ** 2; i += 1) {
+    for (let i = 0; i < this.fieldSize ** 2; i++) {
       const cell = document.createElement('div');
       Object.assign(cell.style, {
         border: '1px solid #ccc',
@@ -41,7 +41,8 @@ class Game {
       field.appendChild(cell);
     }
 
-    document.body.appendChild(field);
+    const root = document.getElementById('app') || document.body;
+    root.appendChild(field);
     this.field = field;
   }
 
@@ -58,33 +59,27 @@ class Game {
   }
 
   moveToRandomCell() {
-  const cells = this.field.querySelectorAll('.cell');
+    const cells = this.field.querySelectorAll('.cell');
+    if (!cells.length) return;
 
-  if (!cells || cells.length === 0) {
-    return;
-  }
+    let newPosition;
+    if (cells.length === 1) {
+      newPosition = 0;
+    } else {
+      do {
+        newPosition = Math.floor(Math.random() * cells.length);
+      } while (newPosition === this.currentPosition);
+    }
 
-  let newPosition;
-  
-  if (cells.length === 1) {
-    newPosition = 0;
-  } else {
-    do {
-      newPosition = Math.floor(Math.random() * cells.length);
-    } while (newPosition === this.currentPosition && cells.length > 1);
-  }
-
-  if (this.currentPosition !== null && cells[this.currentPosition]) {
-    cells[this.currentPosition].innerHTML = '';
-  }
-
-  if (cells[newPosition]) {
+    if (this.currentPosition !== null) {
+      cells[this.currentPosition].innerHTML = '';
+    }
     cells[newPosition].appendChild(this.gnome);
     this.currentPosition = newPosition;
   }
-}
 
   startMoving() {
+    this.stopMoving();
     this.intervalId = setInterval(() => this.moveToRandomCell(), 2000);
   }
 
@@ -94,6 +89,18 @@ class Game {
       this.intervalId = null;
     }
   }
+
+  destroy() {
+    if (this.field?.parentNode) {
+      this.field.parentNode.removeChild(this.field);
+    }
+    this.stopMoving();
+  }
 }
 
-module.exports = Game;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Game;
+}
+if (typeof exports !== 'undefined') {
+  exports.default = Game;
+}
