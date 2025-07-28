@@ -29,6 +29,15 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
         type: 'asset/resource',
+        use: [
+        {
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'images/',
+          },
+        },
+      ],
         generator: {
           filename: 'images/[hash][ext][query]'
         }
@@ -42,7 +51,6 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
-      favicon: path.resolve(__dirname, 'src/favicon.ico')
     })
   ],
   optimization: {
