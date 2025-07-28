@@ -31,13 +31,8 @@ module.exports = {
         type: 'asset/resource',
         use: [
         {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'images/',
-          },
-        },
-      ],
+        test: /\.(png|jpe?g|gif|svg|webp)$/i,
+        type: 'asset/resource',
         generator: {
           filename: 'images/[hash][ext][query]'
         }
