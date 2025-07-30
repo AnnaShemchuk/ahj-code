@@ -1,10 +1,8 @@
-'use strict';
-
 class Game {
   constructor() {
     this.fieldSize = 4;
     this.currentPosition = null;
-    this.gnomeImage = 'gnome.png';
+    this.gnomeImage = 'images/gnome.png';
     this.intervalId = null;
     this.field = null;
     this.gnome = null;
@@ -18,49 +16,54 @@ class Game {
   }
 
   createField() {
-    const field = document.createElement('div');
-    Object.assign(field.style, {
+    const appElement = document.getElementById('app');
+    if (!appElement) {
+      throw new Error('App container not found');
+    }
+
+    this.field = document.createElement('div');
+    this.field.className = 'game-field';
+    Object.assign(this.field.style, {
       display: 'grid',
       gridTemplateColumns: `repeat(${this.fieldSize}, 1fr)`,
       gridTemplateRows: `repeat(${this.fieldSize}, 1fr)`,
       gap: '10px',
       width: '400px',
       height: '400px',
+      backgroundColor: '#f0f0f0'
     });
-    field.className = 'game-field';
 
     for (let i = 0; i < this.fieldSize ** 2; i++) {
       const cell = document.createElement('div');
+      cell.className = 'cell';
       Object.assign(cell.style, {
         border: '1px solid #ccc',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: 'white'
       });
-      cell.className = 'cell';
-      field.appendChild(cell);
+      this.field.appendChild(cell);
     }
 
-    const root = document.getElementById('app') || document.body;
-    root.appendChild(field);
-    this.field = field;
+    appElement.appendChild(this.field);
   }
 
   createGnome() {
     this.gnome = document.createElement('img');
+    this.gnome.className = 'gnome';
+    this.gnome.src = this.gnomeImage;
+    this.gnome.alt = 'Gnome character';
     Object.assign(this.gnome.style, {
       width: '50px',
-      height: '50px',
+      height: '50px'
     });
-    this.gnome.src = this.gnomeImage;
-    this.gnome.className = 'gnome';
-    this.gnome.alt = 'Gnome character';
     this.moveToRandomCell();
   }
 
   moveToRandomCell() {
-    const cells = this.field.querySelectorAll('.cell');
-    if (!cells.length) return;
+    const cells = this.field?.querySelectorAll('.cell');
+    if (!cells || !cells.length) return;
 
     let newPosition;
     if (cells.length === 1) {
@@ -68,7 +71,7 @@ class Game {
     } else {
       do {
         newPosition = Math.floor(Math.random() * cells.length);
-      } while (newPosition === this.currentPosition);
+      } while (newPosition === this.currentPosition && cells.length > 1);
     }
 
     if (this.currentPosition !== null) {
@@ -80,7 +83,7 @@ class Game {
 
   startMoving() {
     this.stopMoving();
-    this.intervalId = setInterval(() => this.moveToRandomCell(), 2000);
+    this.intervalId = setInterval(() => this.moveToRandomCell(), 1000);
   }
 
   stopMoving() {
@@ -98,9 +101,10 @@ class Game {
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = Game;
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.game = new Game();
+  });
 }
-if (typeof exports !== 'undefined') {
-  exports.default = Game;
-}
+
+export default Game;

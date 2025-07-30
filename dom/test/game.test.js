@@ -1,47 +1,46 @@
-const Game = require('../src/js/app');
+import Game from '../src/js/app.js';
 
 describe('Game', () => {
   let game;
-
-  beforeAll(() => {
-
-    document.body.innerHTML = '<div id="app"></div>';
-    global.Image = class {
-      constructor() {
-        this.src = '';
-        setTimeout(() => this.onload?.(), 0);
-      }
-    };
-  });
-
+  
   beforeEach(() => {
+    document.body.innerHTML = '<div id="app"></div>';
     game = new Game();
   });
 
   afterEach(() => {
+    game.stopMoving();
     game.destroy();
-    document.body.innerHTML = '<div id="app"></div>';
+    document.body.innerHTML = '';
   });
 
-  test('should create game field with 16 cells', () => {
-    const field = document.querySelector('.game-field');
-    expect(field).not.toBeNull();
-    expect(field.children).toHaveLength(16);
+  test('creates game board with 16 cells', () => {
+    const cells = document.querySelectorAll('.cell');
+    expect(cells.length).toBe(16);
   });
 
-  test('should create gnome image element', () => {
+  test('creates gnome image element', () => {
     const gnome = document.querySelector('.gnome');
     expect(gnome).not.toBeNull();
     expect(gnome.tagName).toBe('IMG');
     expect(gnome.src).toContain('gnome.png');
   });
 
-  test('should move gnome to different cells', () => {
+  test('moves gnome to different cells', () => {
     const initialPos = game.currentPosition;
     jest.useFakeTimers();
     game.startMoving();
-    jest.advanceTimersByTime(2000);
+    jest.advanceTimersByTime(1000);
+    
     expect(game.currentPosition).not.toBe(initialPos);
     jest.useRealTimers();
+  });
+
+  test('stopMoving() clears interval', () => {
+    game.startMoving();
+    expect(game.intervalId).not.toBeNull();
+    
+    game.stopMoving();
+    expect(game.intervalId).toBeNull();
   });
 });

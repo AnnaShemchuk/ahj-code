@@ -1,73 +1,58 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  mode: process.env.NODE_ENV || 'development',
-  entry: path.resolve(__dirname, 'src/index.js'),
+  entry: './src/js/app.js',
   output: {
-    filename: '[name].[contenthash].js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    clean: true,
-    publicPath: '/',
-    assetModuleFilename: 'assets/[hash][ext][query]'
-  },
-  resolve: {
-    extensions: ['.js', '.json'],
+    publicPath: '/'
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
+        use: 'babel-loader'
       },
       {
-        test: /\.(png|jpe?g|gif|svg|webp)$/i,
-        type: 'asset/resource',
-        use: [
-        {
-        test: /\.(png|jpe?g|gif|svg|webp)$/i,
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.(png|jpe?g|gif|ico)$/i,
         type: 'asset/resource',
         generator: {
-          filename: 'images/[hash][ext][query]'
+          filename: 'images/[name][ext]'
         }
-      },
-      {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
       }
     ]
   },
+  devServer: {
+  static: {
+    directory: path.join(__dirname, 'public'),
+  },
+},
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'src/index.html'),
-    })
+      template: './src/index.html',
+    }),
+    
+    new CopyPlugin({
+      patterns: [
+        { 
+          from: 'public/images', 
+          to: 'images' 
+        },
+      ],
+    }),
   ],
-  optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
-  },
-  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map',
-  devServer: {
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
-    compress: true,
-    port: 'auto',
-    open: true,
-    hot: true,
-    historyApiFallback: true,
-    client: {
-      overlay: {
-        errors: true,
-        warnings: false,
-      },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@images': path.resolve(__dirname, 'src/images'),
+      '@styles': path.resolve(__dirname, 'src/css')
     }
   }
 };
